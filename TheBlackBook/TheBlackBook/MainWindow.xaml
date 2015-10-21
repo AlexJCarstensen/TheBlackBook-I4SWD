@@ -6,7 +6,31 @@
         xmlns:local="clr-namespace:TheBlackBook"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
+    <Window.Resources>
+        <local:TBBModelCollection x:Key="TbbModelCollection"></local:TBBModelCollection>
+    </Window.Resources>
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
         
+        <ListView Grid.Column="0" Name="tbbListView" ItemsSource="{StaticResource TbbModelCollection}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid MinWidth="{Binding ElementName=tbbListView, Path=ActualWidth}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBlock Margin="10 0 0 0" Grid.Column="0" HorizontalAlignment="Left" Text="{Binding Name}"></TextBlock>
+                        
+                        <TextBlock Margin="0 0 20 0" Grid.Column="1" HorizontalAlignment="Right"  Text="{Binding Owe, StringFormat=C, ConverterCulture=dk-DK}"></TextBlock>
+                     
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </Window>
