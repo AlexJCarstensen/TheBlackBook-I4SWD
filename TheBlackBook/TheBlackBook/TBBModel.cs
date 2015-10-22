@@ -25,22 +25,45 @@ namespace TheBlackBook
             Add(locVar1);
         }
     }
+
     public class TBBModel : INotifyPropertyChanged
     {
-        public TBBModel()
-        {
-            Name = "Name";
-            Transaction = new ObservableCollection<TBBTransaction>();
-            Transaction.Add(new TBBTransaction());
-            Transaction.CollectionChanged += delegate { OnPropertyChanged(nameof(Transaction)); };
-        }
-
-        public TBBModel(string name)
+        public TBBModel(string name = "Name")
         {
             Name = name;
             Transaction = new ObservableCollection<TBBTransaction>();
-            Transaction.CollectionChanged += delegate {OnPropertyChanged(nameof(Transaction)); };
+            // To update on TBBTransaction change
+            Transaction.CollectionChanged += ContentCollectionChanged;
+            // To update on TBBTransaction add
+            Transaction.CollectionChanged += delegate { OnPropertyChanged(nameof(Transaction)); };
         }
+
+        /// <summary>
+        /// Function to subscribe and unscribe
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void ContentCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (TBBTransaction item in e.OldItems)
+                {
+                    //Removed items
+                    // ReSharper disable once EventUnsubscriptionViaAnonymousDelegate
+                    item.PropertyChanged -= delegate { OnPropertyChanged(nameof(Transaction)); };
+                }
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (TBBTransaction item in e.NewItems)
+                {
+                    //Added items
+                    item.PropertyChanged += delegate { OnPropertyChanged(nameof(Transaction)); };
+                }
+            }
+        }
+
         public string Name { get; set; }
         public ObservableCollection<TBBTransaction> Transaction { get; set; }
 
@@ -53,7 +76,7 @@ namespace TheBlackBook
         }
     }
 
-    public class TBBTransaction
+    public class TBBTransaction : INotifyPropertyChanged
     {
         public TBBTransaction()
         {
@@ -65,7 +88,20 @@ namespace TheBlackBook
             TBBDateTime = date;
             Transfer = transferAmout;
         }
-        public DateTime TBBDateTime { get; set; }
-        public double Transfer { get; set; }
+
+        private DateTime _tBBDateTime;
+        public DateTime TBBDateTime { get { return _tBBDateTime; } set { _tBBDateTime = value; OnPropertyChanged(); } }
+        private double _transfer;
+        public double Transfer { get { return _transfer; } set { _transfer = value; OnPropertyChanged(); } }
+
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }
