@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -12,20 +11,6 @@ using TheBlackBook.Annotations;
 
 namespace TheBlackBook
 {
-    public class TBBModelCollection : ObservableCollection<TBBModel>
-    {
-        public TBBModelCollection()
-        {
-            var locVar = new TBBModel("Alex");
-            locVar.Transaction.Add(new TBBTransaction(DateTime.Now, 100));
-            Add(locVar);
-
-            var locVar1 = new TBBModel("Jeba");
-            locVar1.Transaction.Add(new TBBTransaction(DateTime.Now.AddHours(-4), -75));
-            Add(locVar1);
-        }
-    }
-
     public class TBBModel : INotifyPropertyChanged
     {
         public TBBModel(string name = "Name")
@@ -39,7 +24,7 @@ namespace TheBlackBook
         }
 
         /// <summary>
-        /// Function to subscribe and unscribe
+        /// Function to subscribe and unscribe  property changed events
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -69,35 +54,6 @@ namespace TheBlackBook
 
 
         public event PropertyChangedEventHandler PropertyChanged;
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    public class TBBTransaction : INotifyPropertyChanged
-    {
-        public TBBTransaction()
-        {
-            TBBDateTime = DateTime.Now;
-            Transfer = 0;
-        }
-        public TBBTransaction(DateTime date, double transferAmout )
-        {
-            TBBDateTime = date;
-            Transfer = transferAmout;
-        }
-
-        private DateTime _tBBDateTime;
-        public DateTime TBBDateTime { get { return _tBBDateTime; } set { _tBBDateTime = value; OnPropertyChanged(); } }
-        private double _transfer;
-        public double Transfer { get { return _transfer; } set { _transfer = value; OnPropertyChanged(); } }
-
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {

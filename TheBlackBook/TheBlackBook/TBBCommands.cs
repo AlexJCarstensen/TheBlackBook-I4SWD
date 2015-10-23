@@ -21,5 +21,12 @@ namespace TheBlackBook
             {
                 ((list.ItemsSource) as ObservableCollection<TBBModel>)?[list.SelectedIndex]?.Transaction.Add(new TBBTransaction());
             }));
+
+        private ICommand _deleteTbbModelCommand;
+        public ICommand DeleteTbbModelCommand => _deleteTbbModelCommand ?? (_deleteTbbModelCommand = new RelayCommand<object[]>(
+            objects =>
+            {
+                (objects[0] as TBBModelCollection)?.Remove(objects[1] as TBBModel);
+            }));
     }
 }
