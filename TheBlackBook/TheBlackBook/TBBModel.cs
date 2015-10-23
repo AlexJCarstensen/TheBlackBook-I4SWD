@@ -13,6 +13,7 @@ namespace TheBlackBook
 {
     public class TBBModel : INotifyPropertyChanged
     {
+        //test
         public TBBModel(string name = "Name")
         {
             Name = name;
